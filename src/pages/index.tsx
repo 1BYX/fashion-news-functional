@@ -2,6 +2,7 @@ import { type NextPage } from "next";
 import { useQuery, useQueryClient } from "react-query";
 import Loader from "../loader";
 import getNewsArticles from "../utils";
+import { useRouter } from "next/router";
 
 interface InewsArticle {
   title: string;
@@ -11,14 +12,14 @@ interface InewsArticle {
 }
 
 const Home: NextPage = () => {
-  const queryClient = useQueryClient();
+  const router = useRouter();
 
   const { data, isLoading, isError } = useQuery(
     ["newsArticles"],
     getNewsArticles
   );
 
-  data && console.log(data);
+  isError && router.push("/404");
 
   return (
     <div className="grid h-screen w-full items-center justify-items-center bg-gray-200">
