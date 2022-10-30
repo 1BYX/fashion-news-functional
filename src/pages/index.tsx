@@ -55,16 +55,12 @@ const Home: NextPage = () => {
 
   //loadMore function that is run when the button is clicked
   const loadMore = async () => {
-    setOffset((prevOffset) => (prevOffset += 13));
+    setOffset((prevOffset) => (prevOffset += 15));
 
     //fetching step
-    if (newsArticles.length % 13 != 0) {
-      const formattedArticles = newsArticles.slice(0, newsArticles.length - 1);
-      setNewsArticles(formattedArticles);
-    }
+    const newBatch = await getNewsArticles({}, offset + 15);
 
     //state setting step
-    const newBatch = await getNewsArticles({}, offset + 13);
     setNewsArticles((prevArticles) => [
       ...prevArticles,
       ...newBatch.fashionunitedNlNewsArticles,
@@ -82,6 +78,13 @@ const Home: NextPage = () => {
         { shallow: true }
       );
     } else {
+      if (newsArticles.length % 15 != 0) {
+        const formattedArticles = newsArticles.slice(
+          0,
+          newsArticles.length - 1
+        );
+        setNewsArticles(formattedArticles);
+      }
       router.push(
         {
           query: {},
@@ -93,10 +96,10 @@ const Home: NextPage = () => {
   };
 
   return (
-    <div className="grid h-full w-full items-center justify-items-center bg-gray-200 p-12">
+    <div className="grid h-full w-full items-center justify-items-center bg-gray-200 p-6 sm:p-12">
       <div className="pb-12 text-4xl">Fashion News</div>
 
-      <div className="grid h-full w-full max-w-7xl grid-cols-5 justify-items-center gap-4">
+      <div className="grid h-full w-full max-w-7xl grid-flow-row-dense grid-cols-1 justify-items-center gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
         {isLoading ? (
           <Loader />
         ) : (
@@ -106,10 +109,10 @@ const Home: NextPage = () => {
               <div
                 onClick={() => toggleDialog(true, index, a.title)}
                 className={`h-88 w-full rounded bg-white font-semibold shadow ${
-                  index == 0 || index % 13 == 0
-                    ? "h-8xl col-span-2 row-span-2 text-3xl"
+                  index == 0 || index % 10 == 0
+                    ? "sm:h-8xl sm:col-span-2 sm:row-span-2 sm:text-3xl"
                     : index % 10 == 0
-                    ? "col-span-2 text-lg"
+                    ? "sm:col-span-2 sm:text-lg"
                     : "text-base"
                 }`}
                 key={index}
@@ -117,10 +120,10 @@ const Home: NextPage = () => {
                 <div className="rows-[4fr_3fr_1fr] grid h-full w-full">
                   <div
                     className={`${
-                      index == 1 || index % 13 == 0
-                        ? "h-88"
+                      index == 1 || index % 10 == 0
+                        ? "sm:h-88"
                         : index % 10 == 0
-                        ? "h-56"
+                        ? "sm:h-56"
                         : "h-40"
                     }`}
                   >
@@ -131,7 +134,7 @@ const Home: NextPage = () => {
                   </div>
                   <h2 className="px-3 pt-3">{a.title}</h2>
                   <div className="p-3 text-base font-normal opacity-60">
-                    {(index == 0 || index % 13 == 0) && a.description}
+                    {(index == 0 || index % 10 == 0) && a.description}
                   </div>
                   <div className="self-end px-3 py-4">
                     <a href={a.url} className="text-base underline ">

@@ -3,7 +3,7 @@ const endpoint = "https://fashionunited.info/graphql/";
 
 let query = `
 query NewsArticles($keywords: [String]) {
-fashionunitedNlNewsArticles(keywords: $keywords, offset: 0, limit: 20) {
+fashionunitedNlNewsArticles(keywords: $keywords, offset: 0, limit: 15) {
 title
 url
 imageUrl
@@ -15,7 +15,7 @@ description
 export default function getNewsArticles(
   variables = {},
   _offset = 0,
-  _limit = 13
+  _limit = 15
 ) {
   updateQuery(_offset, _limit);
   return request(endpoint, query, variables);
