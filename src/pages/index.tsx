@@ -4,6 +4,7 @@ import Loader from "../components/loader";
 import getNewsArticles from "../utils";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import Dialog from "@mui/material/Dialog";
 
 interface InewsArticle {
   title: string;
@@ -20,6 +21,11 @@ const Home: NextPage = () => {
 
   const [newsArticles, setNewsArticles] = useState<Array<InewsArticle>>([]);
   const [offset, setOffset] = useState(0);
+
+  const [dialogOpen, setDialogOpen] = useState({
+    id: 0,
+    isOpen: false,
+  });
 
   const { data, isLoading, isError } = useQuery(
     ["newsArticles"],
@@ -41,6 +47,17 @@ const Home: NextPage = () => {
     ]);
   };
 
+  const toggleDialog = (_id: number, isOpen: boolean) => {
+    if (isOpen) {
+      setDialogOpen({
+        id: _id,
+        isOpen: true,
+      });
+    } else {
+      setDialogOpen({ id: 0, isOpen: false });
+    }
+  };
+
   return (
     <div className="grid h-full w-full items-center justify-items-center bg-gray-200 p-12">
       <div className="pb-12 text-4xl">Fashion News</div>
@@ -50,42 +67,71 @@ const Home: NextPage = () => {
         ) : (
           data &&
           newsArticles.map((a: InewsArticle, index: number) => (
-            <div
-              className={`h-88 w-full rounded bg-white font-semibold shadow ${
-                index == 0 || index % 13 == 0
-                  ? "h-8xl col-span-2 row-span-2 text-3xl"
-                  : index % 10 == 0
-                  ? "col-span-2 text-lg"
-                  : "text-base"
-              }`}
-              key={index}
-            >
-              <div className="rows-[4fr_3fr_1fr] grid h-full w-full">
-                <div
-                  className={`${
-                    index == 1 || index % 13 == 0
-                      ? "h-88"
-                      : index % 10 == 0
-                      ? "h-56"
-                      : "h-40"
-                  }`}
-                >
-                  <img
-                    src={a.imageUrl || DEFAULT_IMAGE}
-                    className="h-full w-full rounded-t object-cover"
-                  />
-                </div>
-                <h2 className="px-3 pt-3">{a.title}</h2>
-                <div className="p-3 text-base font-normal opacity-60">
-                  {(index == 0 || index % 13 == 0) && a.description}
-                </div>
-                <div className="self-end px-3 py-4">
-                  <a href={a.url} className="text-base underline ">
-                    Read more
-                  </a>
+            <>
+              <div
+                onClick={() => toggleDialog(index, true)}
+                className={`h-88 w-full rounded bg-white font-semibold shadow ${
+                  index == 0 || index % 13 == 0
+                    ? "h-8xl col-span-2 row-span-2 text-3xl"
+                    : index % 10 == 0
+                    ? "col-span-2 text-lg"
+                    : "text-base"
+                }`}
+                key={index}
+              >
+                <div className="rows-[4fr_3fr_1fr] grid h-full w-full">
+                  <div
+                    className={`${
+                      index == 1 || index % 13 == 0
+                        ? "h-88"
+                        : index % 10 == 0
+                        ? "h-56"
+                        : "h-40"
+                    }`}
+                  >
+                    <img
+                      src={a.imageUrl || DEFAULT_IMAGE}
+                      className="h-full w-full rounded-t object-cover"
+                    />
+                  </div>
+                  <h2 className="px-3 pt-3">{a.title}</h2>
+                  <div className="p-3 text-base font-normal opacity-60">
+                    {(index == 0 || index % 13 == 0) && a.description}
+                  </div>
+                  <div className="self-end px-3 py-4">
+                    <a href={a.url} className="text-base underline ">
+                      Read more
+                    </a>
+                  </div>
                 </div>
               </div>
-            </div>
+              {dialogOpen ? (
+                <Dialog
+                  open={dialogOpen.id == index && dialogOpen.isOpen}
+                  onClose={() => toggleDialog(0, false)}
+                >
+                  <div className="h-88 h-8xl col-span-2 row-span-2 w-full rounded bg-white text-3xl font-semibold shadow">
+                    <div className="rows-[4fr_3fr_1fr] grid h-full w-full">
+                      <div className="h-88">
+                        <img
+                          src={a.imageUrl || DEFAULT_IMAGE}
+                          className="h-full w-full rounded-t object-cover"
+                        />
+                      </div>
+                      <h2 className="px-3 pt-3">{a.title}</h2>
+                      <div className="p-3 text-base font-normal opacity-60">
+                        {a.description}
+                      </div>
+                      <div className="self-end px-3 py-4">
+                        <a href={a.url} className="text-base underline ">
+                          Read more
+                        </a>
+                      </div>
+                    </div>
+                  </div>
+                </Dialog>
+              ) : null}
+            </>
           ))
         )}
       </div>

@@ -15,7 +15,7 @@ description
 export default function getNewsArticles(
   variables = {},
   _offset = 0,
-  _limit = 26
+  _limit = 13
 ) {
   updateQuery(_offset, _limit);
   return request(endpoint, query, variables);
